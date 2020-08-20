@@ -21,7 +21,6 @@ class NeoPixels():
         self.DEVEL = DEVEL
         self.updatePygame = True
         self.lock = _thread.allocate_lock()
-        self.brightness = brightness
         self._fade_thread = None
         self.fadeDelay = 0.5
         self.fadeAmount = 20
@@ -33,9 +32,11 @@ class NeoPixels():
             self.pixels = [(0,0,0)] * self.size
             self._display_thread = _thread.start_new_thread(self._display,())
         else:
-            import board
+            import board # must use GPIO 10/12/18/21
             import neopixel
             self.pixels = neopixel.NeoPixel(board.D18, 300, auto_write=False)
+
+        self.set_brightness(brightness)
 
     def __enter__(self):
         return self
@@ -77,7 +78,8 @@ class NeoPixels():
 
     def set_brightness(self, amount=1.0):
         if not self.DEVEL:
-            self.pixels.brightness(amount)            
+            self.pixels.brightness = amount
+            self.show()
         else:
             self.show()
         self.brightness = amount

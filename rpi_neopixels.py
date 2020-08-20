@@ -10,9 +10,9 @@ modify melspectrum to only pass half the data (other not needed)
 Vizualisers: rolling peak volume
 '''
 
-DEVELOPER_MODE = True
+DEVELOPER_MODE = False
     
-with neopixel_dev.NeoPixels(DEVELOPER_MODE) as pixels: #Start NeoPixels with in simulation mode
+with neopixel_dev.NeoPixels(DEVELOPER_MODE, brightness=0.2) as pixels: #Start NeoPixels with in simulation mode
     #led_animations.rainbow(pixels, 1)
     #led_animations.pulse(pixels, 4, (255, 0, 0))
     #led_animations.pulse_sin(pixels, 1, (0,255,255))
