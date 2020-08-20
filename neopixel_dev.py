@@ -28,6 +28,7 @@ class NeoPixels():
         self.fadeDelay = 0.5
         self.fadeAmount = 20
         self._socket_queue = queue.SimpleQueue()
+        self._fps_time = time.time()
 
         if fade:
             self.enable_fade()
@@ -68,6 +69,8 @@ class NeoPixels():
             self.pixels.show()
         else:
             self.updatePygame = True
+        #print(time.time() - self._fps_time)
+        self._fps_time = time.time()
 
     #fills pixels with a given color
     def fill(self, color):
@@ -104,7 +107,7 @@ class NeoPixels():
 
     #listens with a socket and gives sound data to the sound_handler
     def run_visualizer_socket(self, sound_handler, args=None, port=5555, host="127.0.0.1", 
-                                                   num_segments=None, f_low=65, f_high=8372, chunk_size=1024):
+                                                   num_segments=None, f_low=65, f_high=8372, chunk_size=512):
         import librosa #only import if using visualizer, because the lib is a pain to install
         import numpy
 
@@ -121,17 +124,20 @@ class NeoPixels():
             
             audio_data = self._socket_queue.get()
 
-            N_FFT = 4096 #4096
+            N_FFT = 2048 #4096    
             x_fft = numpy.fft.rfft(audio_data, n=N_FFT) # Compute real fast fourier transform
+
             M = librosa.filters.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
+
             melspectrum = M.dot(abs(x_fft)) # Compute mel spectrum
+
 
             if args is not None:
                 sound_handler(self, melspectrum, args)
             else:
                 sound_handler(self, melspectrum) 
 
-            time.sleep(chunk_size/44100)#delay while audio is played at 44100hz               
+            #time.sleep(chunk_size/44100)#delay while audio is played at 44100hz               
 
     def _socket_handler(self, chunk_size=4096, host="127.0.0.1", port=5555):
         import numpy
