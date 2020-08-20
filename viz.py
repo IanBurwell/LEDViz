@@ -1,3 +1,8 @@
+"""
+Initial test displaying udp pcm audio in terminal
+Mostly for reference
+"""
+
 import socket
 import sys
 import audioop
@@ -11,8 +16,8 @@ ENERGY_THRESHOLD = 0.4
 N_FFT = 4096
 #F_LO = librosa.note_to_hz('C2')
 #F_HI = librosa.note_to_hz('C9')
-F_HI = 20
-F_LO = 20000
+F_HI = 20000
+F_LO = 20
 M = librosa.filters.mel(44100, N_FFT, SCREEN_WIDTH, fmin=F_LO, fmax=F_HI)
 
 def generate_string_from_audio(audio_data):
@@ -26,8 +31,6 @@ def generate_string_from_audio(audio_data):
     char_list = [' ']*SCREEN_WIDTH
 
     for i in range(SCREEN_WIDTH):
-#        if i == 0:
-#            print(melspectrum[i])
 
         # If there is energy in this frequency bin, display an asterisk.
         if melspectrum[i] is not 0 and math.log10(abs(melspectrum[i])) > ENERGY_THRESHOLD:
