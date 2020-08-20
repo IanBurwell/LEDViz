@@ -130,9 +130,9 @@ class NeoPixels():
                 melspectrum = M.dot(abs(x_fft)) # Compute mel spectrum.
 
                 if args is not None:
-                    sound_handler(melspectrum, args)
+                    sound_handler(self, melspectrum, args)
                 else:
-                     sound_handler(melspectrum)                
+                     sound_handler(self, melspectrum)                
 
 
     def _fade(self):
