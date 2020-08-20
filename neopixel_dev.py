@@ -23,7 +23,6 @@ class NeoPixels():
         self.DEVEL = DEVEL
         self.updatePygame = True
         self.lock = _thread.allocate_lock()
-        self.brightness = brightness
         self._fade_thread = None
         self.fadeDelay = 0.5
         self.fadeAmount = 20
@@ -37,9 +36,11 @@ class NeoPixels():
             self.pixels = [(0,0,0)] * self.size
             self._display_thread = _thread.start_new_thread(self._display,())
         else:
-            import board
+            import board # must use GPIO 10/12/18/21
             import neopixel
             self.pixels = neopixel.NeoPixel(board.D18, 300, auto_write=False)
+
+        self.set_brightness(brightness)
 
     def __enter__(self):
         return self
@@ -69,7 +70,11 @@ class NeoPixels():
             self.pixels.show()
         else:
             self.updatePygame = True
+<<<<<<< HEAD
         #print(time.time() - self._fps_time)
+=======
+        print(time.time() - self._fps_time)
+>>>>>>> 91d9bdcb3f244e24bf5d489dfe3e4b44bd642d3b
         self._fps_time = time.time()
 
     #fills pixels with a given color
@@ -83,7 +88,8 @@ class NeoPixels():
 
     def set_brightness(self, amount=1.0):
         if not self.DEVEL:
-            self.pixels.brightness(amount)            
+            self.pixels.brightness = amount
+            self.show()
         else:
             self.show()
         self.brightness = amount
@@ -107,7 +113,11 @@ class NeoPixels():
 
     #listens with a socket and gives sound data to the sound_handler
     def run_visualizer_socket(self, sound_handler, args=None, port=5555, host="127.0.0.1", 
+<<<<<<< HEAD
                                                    num_segments=None, f_low=65, f_high=8372, chunk_size=512):
+=======
+                                                   num_segments=None, f_low=65, f_high=8372, chunk_size=1024, N_FFT=2048):
+>>>>>>> 91d9bdcb3f244e24bf5d489dfe3e4b44bd642d3b
         import librosa #only import if using visualizer, because the lib is a pain to install
         import numpy
 
@@ -121,10 +131,13 @@ class NeoPixels():
         
         self._socket_thread = _thread.start_new_thread(self._socket_handler,(chunk_size, host, port))
         while True:
-            
+
             audio_data = self._socket_queue.get()
 
+<<<<<<< HEAD
             N_FFT = 2048 #4096    
+=======
+>>>>>>> 91d9bdcb3f244e24bf5d489dfe3e4b44bd642d3b
             x_fft = numpy.fft.rfft(audio_data, n=N_FFT) # Compute real fast fourier transform
 
             M = librosa.filters.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
@@ -139,7 +152,7 @@ class NeoPixels():
 
             #time.sleep(chunk_size/44100)#delay while audio is played at 44100hz               
 
-    def _socket_handler(self, chunk_size=4096, host="127.0.0.1", port=5555):
+    def _socket_handler(self, chunk_size=1024, host="127.0.0.1", port=5555):
         import numpy
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.bind((host, port))
@@ -152,10 +165,13 @@ class NeoPixels():
                 
                 while not self._socket_queue.empty(): #clear the queue
                     self._socket_queue.get_nowait()
-                for i in range(int(len(audio_data)/chunk_size)-1): #divide audio data into chunks and put on the queue
+                if len(audio_data) == chunk_size:
+                    self._socket_queue.put(audio_data)
+                    continue
+                for i in range(len(audio_data)//chunk_size-1): #divide audio data into chunks and put on the queue
                     self._socket_queue.put(audio_data[i*chunk_size : (i+1)*chunk_size])
-                #self._socket_queue.put(audio_data[int(len(audio_data)/chunk_size)*chunk_size:]) #add smaller chunk at end. may be needed if hickups easy to spot
-
+                #if len(audio_data)%chunk_size != 0:
+                #    self._socket_queue.put(audio_data[len(audio_data)//chunk_size*chunk_size:]) #add smaller chunk at end. may be needed if hickups easy to spot
 
 
     def _fade(self):
@@ -226,8 +242,8 @@ class NeoPixels():
             p.terminate()
 
 
-
-
+            
+            
             
             
             

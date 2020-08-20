@@ -2,13 +2,18 @@
 Visualiser for UDP 16bit pcm streams using RPi and NeoPixel
 
 Mopidy setup to stream on "jack" audio device and stream udp under `[audio]`
-`output = tee name=t ! queue ! alsasink device=jack t. ! queue ! udpsink host=127.0.0.1 port=5555`
+`output = tee name=t ! queue ! alsasink device=usb t. ! queue ! udpsink host=127.0.0.1 port=5555`
 
+We need to use USB device because the neopixels break the pi's soundcard
 /etc/asound.conf: 
 ```
 pcm.jack{
 	type hw
 	card Headphones
+}
+pcm.usb{
+        type hw
+        card Device
 }
 ```
 Helpful for librosa setup on RPi, make sure to download only the versions they mention:
