@@ -37,6 +37,6 @@ with neopixel_dev.NeoPixels(DEVELOPER_MODE) as pixels: #Start NeoPixels with in 
 
     #pixels.enable_fade()
     #pixels.run_visualizer_socket(led_visualizers.sound_original)
-    #pixels.run_visualizer_socket(led_visualizers.sound_rgb)
-    pixels.run_visualizer_socket(led_visualizers.sound_pulse, ((128,0,128)))
+    pixels.run_visualizer_socket(led_visualizers.sound_rgb)
+    #pixels.run_visualizer_socket(led_visualizers.sound_pulse, ((128,0,128)))
 
