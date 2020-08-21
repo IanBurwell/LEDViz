@@ -34,4 +34,4 @@ def sound_pulse(pixels, melspectrum, color):
     for i in range(len(pixels)):
         pixels[i] = color
 
-    pixels.set_brightness(min(1, sum(melspectrum[:15]/15)/4))
+    pixels.set_brightness(min(1, sum(melspectrum)/len(pixels)))
