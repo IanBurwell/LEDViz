@@ -106,10 +106,10 @@ class NeoPixels():
 
     #listens with a socket and gives sound data to the sound_handler
     def run_visualizer_socket(self, sound_handler, args=None, port=5555, host="127.0.0.1", 
-                                                   num_segments=None, f_low=65, f_high=8372, chunk_size=1024, N_FFT=2048):
-        import librosa #only import if using visualizer, because the lib is a pain to install
+                                                   num_segments=None, f_low=65, f_high=8372, 
+                                                   chunk_size=512, N_FFT=2048, raw_fft=False):
         import numpy
-
+        import librosa_mel
         if num_segments is None: #default number of segments/bins in the melspectrum
             num_segments = self.size
         
@@ -120,20 +120,19 @@ class NeoPixels():
         
         self._socket_thread = _thread.start_new_thread(self._socket_handler,(chunk_size, host, port))
         while True:
-
+        
             audio_data = self._socket_queue.get()
-
             x_fft = numpy.fft.rfft(audio_data, n=N_FFT) # Compute real fast fourier transform
-
-            M = librosa.filters.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
-
-            melspectrum = M.dot(abs(x_fft)) # Compute mel spectrum
-
+            if raw_fft:
+                spectrum = x_fft
+            else:
+                M = librosa_mel.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
+                spectrum = M.dot(abs(x_fft)) # Compute mel spectrum
 
             if args is not None:
-                sound_handler(self, melspectrum, args)
+                sound_handler(self, spectrum, args)
             else:
-                sound_handler(self, melspectrum) 
+                sound_handler(self, spectrum) 
 
             #time.sleep(chunk_size/44100)#delay while audio is played at 44100hz               
 
@@ -215,7 +214,7 @@ class NeoPixels():
                             output=True)
             
             # play/send stream
-            chunk_size = 8192 #2048 #lower is more latend but higher fps
+            chunk_size = 4096 #2048 #lower is more latend but higher fps
             data = wf.readframes(chunk_size)
             while len(data) > 0:
                 stream.write(data)

@@ -10,7 +10,7 @@ modify melspectrum to only pass half the data (other not needed)
 Vizualisers: rolling peak volume
 '''
 
-DEVELOPER_MODE = False
+DEVELOPER_MODE = True
     
 with neopixel_dev.NeoPixels(DEVELOPER_MODE) as pixels: #Start NeoPixels with in simulation mode
     #led_animations.rainbow(pixels, 1)
@@ -37,6 +37,6 @@ with neopixel_dev.NeoPixels(DEVELOPER_MODE) as pixels: #Start NeoPixels with in 
 
     #pixels.enable_fade()
     #pixels.run_visualizer_socket(led_visualizers.sound_original)
-    pixels.run_visualizer_socket(led_visualizers.sound_rgb)
+    pixels.run_visualizer_socket(led_visualizers.sound_rgb, num_segments=150)
     #pixels.run_visualizer_socket(led_visualizers.sound_pulse, ((128,0,128)))
 

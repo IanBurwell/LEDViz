@@ -22,7 +22,7 @@ def sound_original(pixels, melspectrum):
             pixels[len(pixels)//2-i] = value
     pixels.show()
 
-def sound_rgb(pixels, melspectrum, num_segments=150):
+def sound_rgb(pixels, melspectrum):
     for i in range(len(pixels)//2):
         r, g, b = colorsys.hls_to_rgb(max(0, 1-melspectrum[i]),0.5,1)
         bright = min(1, max(0, (melspectrum[i]-0.1)/4))
