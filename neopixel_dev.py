@@ -119,6 +119,7 @@ class NeoPixels():
             port=5555
         
         self._socket_thread = _thread.start_new_thread(self._socket_handler,(chunk_size, host, port))
+        M = librosa_mel.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
         while True:
         
             audio_data = self._socket_queue.get()
@@ -126,7 +127,6 @@ class NeoPixels():
             if raw_fft:
                 spectrum = x_fft
             else:
-                M = librosa_mel.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
                 spectrum = M.dot(abs(x_fft)) # Compute mel spectrum
 
             if args is not None:
