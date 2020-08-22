@@ -120,6 +120,7 @@ class NeoPixels():
         
         self._socket_thread = _thread.start_new_thread(self._socket_handler,(chunk_size, host, port))
         M = librosa_mel.mel(44100, N_FFT, num_segments, fmin=f_low, fmax=f_high)
+        
         while True:
         
             audio_data = self._socket_queue.get()
